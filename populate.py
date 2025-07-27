@@ -1,8 +1,9 @@
 import os
 import shutil
 import math
+import random
 
-def populate_folder(source_folder, destination_folder, x):
+def populate_folder(source_folder, destination_folder, x, shuffle=False):
     # Delete the destination folder and all its contents if it exists
     if os.path.exists(destination_folder):
         shutil.rmtree(destination_folder)
@@ -12,8 +13,11 @@ def populate_folder(source_folder, destination_folder, x):
 
     image_extensions = {'.jpg', '.jpeg', '.png', '.bmp', '.gif'}
 
-    # Calculate padding width based on copies count
+    # Calculate padding width based on copies count (for non-shuffle mode)
     padding = max(1, math.ceil(math.log10(x+1)))
+
+    # Keep track of used random names to avoid collisions
+    used_names = set()
 
     for filename in os.listdir(source_folder):
         name, ext = os.path.splitext(filename)
@@ -21,7 +25,17 @@ def populate_folder(source_folder, destination_folder, x):
             source_path = os.path.join(source_folder, filename)
 
             for i in range(1, x + 1):
-                new_filename = f"{name}_copy{i:0{padding}d}{ext}"
-                destination_path = os.path.join(destination_folder, new_filename)
+                if shuffle:
+                    # Generate a random 6-digit number string for the filename
+                    while True:
+                        rand_num = random.randint(0, 999999)
+                        new_name = f"{rand_num:06d}{ext}"
+                        if new_name not in used_names:
+                            used_names.add(new_name)
+                            break
+                else:
+                    new_name = f"{name}_copy{i:0{padding}d}{ext}"
+
+                destination_path = os.path.join(destination_folder, new_name)
                 shutil.copy2(source_path, destination_path)
-                print(f"Copied {filename} → {new_filename}")
+                print(f"Copied {filename} → {new_name}")

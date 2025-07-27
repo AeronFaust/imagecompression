@@ -20,7 +20,7 @@ if __name__ == '__main__':
     if os.path.exists(output):
         shutil.rmtree(output)
 
-    populate_folder('./images', './test', 60)
+    populate_folder('./images', './test', 60, shuffle=True)
 
     start = time.time()
 
@@ -28,8 +28,8 @@ if __name__ == '__main__':
     downsample_images(
         input_dir = input,
         output_dir = output,
-        max_size=(100, 60),
-        quality=80,
+        max_size=(180, 180),
+        quality=100,
         fmt="JPEG" 
     )
 
@@ -41,6 +41,7 @@ if __name__ == '__main__':
     file_count = sum(1 for f in os.listdir(output) if os.path.isfile(os.path.join(output, f)))
 
     print("\n--- Summary ---")
+    print(f"Input image count           : {file_count:.2f} frames")
     print(f"Input folder size           : {size_in:.2f} MB")
     print(f"Output folder size          : {size_out:.2f} MB")
     print(f"Time taken                  : {duration:.2f} seconds")

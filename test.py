@@ -3,6 +3,7 @@ import shutil
 import time
 from downsample import downsample_images
 from populate import populate_folder
+from superresolution import upscale
 
 def get_folder_size(folder_path):
     total_size = 0
@@ -20,16 +21,16 @@ if __name__ == '__main__':
     if os.path.exists(output):
         shutil.rmtree(output)
 
-    populate_folder('./images', './test', 60, shuffle=True)
+    populate_folder('./images', './test', 1, shuffle=False)
 
     start = time.time()
-
+    dimension = 105
     # Running downsample
     downsample_images(
         input_dir = input,
         output_dir = output,
-        max_size=(180, 180),
-        quality=100,
+        max_size=(dimension, dimension),
+        quality=80,
         fmt="JPEG" 
     )
 
@@ -46,3 +47,5 @@ if __name__ == '__main__':
     print(f"Output folder size          : {size_out:.2f} MB")
     print(f"Time taken                  : {duration:.2f} seconds")
     print(f"Compressed Frames Per Second: {file_count/duration:.2f} frames per seconds")
+
+    upscale()
